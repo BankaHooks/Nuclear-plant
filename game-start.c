@@ -6,7 +6,7 @@
 struct termios original_terminal_settings;
 
 // - user-data part
-int user_data(char * username ,int game_difficult ,double user_radiation);
+int user_data();
 char username[50] = "none";
 int game_difficult = 1;
 double user_radiation = 0.0;
@@ -48,7 +48,7 @@ int main(){
 	printf("Succes!\n");
 	
 	tcsetattr(STDIN_FILENO, TCSANOW, &original_terminal_settings);
-	user_data(username , game_difficult , user_radiation);
+	user_data();
 	tcsetattr(STDIN_FILENO, TCSANOW, &raw_terminal_settings);
 
 	printf("Settings saved successfully!\n");
@@ -56,7 +56,7 @@ int main(){
 	return 0;
 }
 
-int user_data(char * username ,int game_difficult ,double user_radiation){
+int user_data(){
 	printf("Enter your name: ");
 	scanf("%s" , username);
 	printf("Enter game difficult: ");
