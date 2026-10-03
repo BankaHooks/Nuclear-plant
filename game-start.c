@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <termios.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 // - Preparation for game part
 struct termios original_terminal_settings;
@@ -24,6 +25,7 @@ int main(){
 
 	if (tcgetattr(STDIN_FILENO, &original_terminal_settings) == -1) {
 		perror("Error getting terminal settings");
+		restore_terminal();
 		return 1;
  	
 	}
@@ -38,6 +40,7 @@ int main(){
 
 	if (tcsetattr(STDIN_FILENO, TCSANOW, &raw_terminal_settings) == -1) {
 		perror("Error setting raw mode");
+		restore_terminal();
 		return 1;
 	}
 	
@@ -52,7 +55,8 @@ int main(){
 	tcsetattr(STDIN_FILENO, TCSANOW, &raw_terminal_settings);
 
 	printf("Settings saved successfully!\n");
-
+	
+	restore_terminal();
 	return 0;
 }
 
@@ -65,7 +69,8 @@ int user_data(){
 	
 	printf("Your data: ");
 	printf("Name: %s" , username , " Game difficult: %d" , game_difficult , "Your radiation level: %f" , user_radiation , '\n');
-
+	
+	restore_terminal();
 	return 0;
 }
 
@@ -103,13 +108,15 @@ int rods_control(){
 
 	tcsetattr(STDIN_FILENO, TCSANOW, &original_terminal_settings);
 	printf("\nTerminal restored. Test over.\n");
-
+	
+	restore_terminal();
 	return 0;
 }
 
 int rods_interface(){
 	printf("Current space - Rods interface\n");
-
+	
+	restore_terminal();
 	return 0;
 }
 
