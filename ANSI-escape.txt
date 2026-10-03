@@ -1,0 +1,18 @@
+# ANSI escape codes
+
+hide cursor
+
+\033[?25l
+
+show cursor
+
+\033[?25h
+
+clear 
+
+\033[2J
+
+move cursos
+
+\033[1;1H
+
