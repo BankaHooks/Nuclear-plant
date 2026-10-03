@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <termios.h>
 #include <unistd.h>
-#include <stdlib.h>
 
 // - Preparation for game part
 struct termios original_terminal_settings;
+void restore_terminal(void);
 
 // - user-data part
 int user_data();
@@ -21,11 +21,11 @@ char key; // Holding current key press;
 int rodctrl_is_running = 1; // 1 - true ; 0 - false
 
 int main(){
-	tcgetattr(STDIN_FILENO, &original _terminal_settings);
+	tcgetattr(STDIN_FILENO, &original_terminal_settings);
 
 	if (tcgetattr(STDIN_FILENO, &original_terminal_settings) == -1) {
 		perror("Error getting terminal settings");
-		restore_terminal();
+		restore_terminal(); 
 		return 1;
  	
 	}
@@ -118,5 +118,9 @@ int rods_interface(){
 	
 	restore_terminal();
 	return 0;
+}
+
+void restore_terminal(void) {
+	tcsetattr(STDIN_FILENO, TCSANOW, &original_terminal_settings);
 }
 
