@@ -2,27 +2,45 @@
 #include <termios.h>
 #include <unistd.h>
 
+// - Preparation for game part
+struct termios original_terminal_settings;
+tcgetattr(STDIN_FILENO, &original_terminal_settings);
+
 
 // - user-data part
 int user_data(char * username ,int game_difficult ,double user_radiation);
 char username[50] = "none";
 int game_difficult = 1;
-double user_radiation = 0.0; 
+double user_radiation = 0.0;
+/* int game_is_running = 1; //  1 - true ; 0 - false */
 
- 
+// - Rods control part
 int rods_interface();
 int rods_control();
+double rod_position = 100.0;
+char key; // Holding current key press;
+int rodctrl_is_running = 1; // 1 - true ; 0 - false
 
 int main(){
-	struct termios original_terminal_settings;
-	tcgetattr(STDIN_FILENO, &original_terminal_settings);
-
 	if (tcgetattr(STDIN_FILENO, &original_terminal_settings) == -1) {
-			perror("Error getting terminal settings");
-			return 1;
-	
+		perror("Error getting terminal settings");
+		return 1;
+ 	
 	}
 
+	struct termios raw_terminal_settings = original_terminal_settings;
+	raw_terminal_settings.c_lflag &= ~ICANON;
+	raw_terminal_settings.c_lflag &= ~ECHO;  //Turning off "Waiting for ENTER and showing what we type"
+	raw_terminal_settings.c_cc[VMIN] = 0;
+	raw_terminal_settings.c_cc[VTIME] = 0;
+
+	tcsetattr(STDIN_FILENO, TCSANOW, &raw_terminal_settings);
+
+	if (tcsetattr(STDIN_FILENO, TCSANOW, &raw_terminal_settings) == -1) {
+		perror("Error setting raw mode");
+		return 1;
+	}
+		
 	printf("User verification started... ");
 	printf("Press any button to continue\n");
 	
@@ -53,8 +71,39 @@ int user_data(char * username ,int game_difficult ,double user_radiation){
 }
 
 int rods_control(){
-	// - here will be rods control
-	printf("Please select rods to move (At least 4 rods by one time\n");
+	while (rodctrl_is_running) {
+		printf("Please select rods to move (At least 4 rods by one time\n");
+		if (read(STDIN_FILENO, &key, 1) == 1) {
+			// We will handle the arrow keys here
+			if (key == 27) {
+				char seq[2];
+				read(STDIN_FILENO, &seq[0], 1);
+				read(STDIN_FILENO, &seq[1], 1);
+
+				if (seq[1] == 'W') { rod_position += 2.15; }
+				
+				if (seq[1] == "S") { rod_position -= 2.15; }
+				
+				if (seq[1] == "E") { rodctrl_is_running = 0; }
+			
+				
+				if (rod_position > 100) {  rod_position = 100; }
+				if (rod_position < 0) { rod_position = 0; }
+
+				printf("\rRods: %d%%  " , rod_position);
+				fflush(stdout); // Force the screen to update immediately 
+
+			}
+		}
+
+		// Reactor similations will be here
+
+		// A small sleep to prevent CPU meltdown
+		usleep(50000); // sleep for 50 milliseconds;
+	}
+
+	tcsetattr(STDIN_FILENO, TCSANOW, &original_terminal_settings);
+	printf("\nTerminal restored. Test over.\n");
 
 	return 0;
 }
