@@ -4,8 +4,6 @@
 
 // - Preparation for game part
 struct termios original_terminal_settings;
-tcgetattr(STDIN_FILENO, &original_terminal_settings);
-
 
 // - user-data part
 int user_data(char * username ,int game_difficult ,double user_radiation);
@@ -22,6 +20,8 @@ char key; // Holding current key press;
 int rodctrl_is_running = 1; // 1 - true ; 0 - false
 
 int main(){
+	tcgetattr(STDIN_FILENO, &original _terminal_settings);
+
 	if (tcgetattr(STDIN_FILENO, &original_terminal_settings) == -1) {
 		perror("Error getting terminal settings");
 		return 1;
@@ -40,17 +40,16 @@ int main(){
 		perror("Error setting raw mode");
 		return 1;
 	}
-		
+	
+	char dummy_c;
 	printf("User verification started... ");
 	printf("Press any button to continue\n");
-	
-	while (getchar() != '\n');
-
-	getchar();
-
+	read(STDIN_FILENO, &dummy_c, 1);
 	printf("Succes!\n");
-
-	//user_data(username , game_difficult , user_radiation);
+	
+	tcsetattr(STDIN_FILENO, TCSANOW, &original_terminal_settings);
+	user_data(username , game_difficult , user_radiation);
+	tcsetattr(STDIN_FILENO, TCSANOW, &raw_terminal_settings);
 
 	printf("Settings saved successfully!\n");
 
@@ -80,17 +79,17 @@ int rods_control(){
 				read(STDIN_FILENO, &seq[0], 1);
 				read(STDIN_FILENO, &seq[1], 1);
 
-				if (seq[1] == 'W') { rod_position += 2.15; }
+				if (seq[1] == 'A') { rod_position += 2.15; }
 				
-				if (seq[1] == "S") { rod_position -= 2.15; }
+				if (seq[1] == 'B') { rod_position -= 2.15; }
 				
-				if (seq[1] == "E") { rodctrl_is_running = 0; }
+				if (seq[1] == 'D') { rodctrl_is_running = 0; }
 			
 				
 				if (rod_position > 100) {  rod_position = 100; }
 				if (rod_position < 0) { rod_position = 0; }
 
-				printf("\rRods: %d%%  " , rod_position);
+				printf("\rRods: %.1f%%  " , rod_position);
 				fflush(stdout); // Force the screen to update immediately 
 
 			}
