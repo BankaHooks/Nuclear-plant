@@ -96,7 +96,7 @@ int rods_control(){
 				if (rod_position > 100) {  rod_position = 100; }
 				if (rod_position < 0) { rod_position = 0; }
 
-				printf("\rRods: %.1f%%  " , rod_position);
+				printf("\rRods: %.2f%%  " , rod_position);
 				fflush(stdout); // Force the screen to update immediately 
 
 			}
@@ -109,7 +109,7 @@ int rods_control(){
 	}
 
 	tcsetattr(STDIN_FILENO, TCSANOW, &original_terminal_settings);
-	printf("\nTerminal restored. Test over.\n");
+	printf("\nAverage rods positions : %.1f%% " , rod_position , '\n');
 	
 	restore_terminal();
 	return 0;
@@ -117,7 +117,7 @@ int rods_control(){
 
 int rods_interface(){
 	printf("Current space - Rods interface\n");
-	
+	printf("[]");	
 	restore_terminal();
 	return 0;
 }
