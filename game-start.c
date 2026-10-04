@@ -56,6 +56,8 @@ int main(){
 
 	printf("Settings saved successfully!\n");
 	
+	rods_control();
+
 	restore_terminal();
 	return 0;
 }
@@ -75,8 +77,8 @@ int user_data(){
 }
 
 int rods_control(){
+	printf("Please select rods to move (At least 4 rods by one time\n");
 	while (rodctrl_is_running) {
-		printf("Please select rods to move (At least 4 rods by one time\n");
 		if (read(STDIN_FILENO, &key, 1) == 1) {
 			// We will handle the arrow keys here
 			if (key == 27) {
@@ -84,9 +86,9 @@ int rods_control(){
 				read(STDIN_FILENO, &seq[0], 1);
 				read(STDIN_FILENO, &seq[1], 1);
 
-				if (seq[1] == 'A') { rod_position += 2.15; }
+				if (seq[1] == 'A') { rod_position += 0.08; }
 				
-				if (seq[1] == 'B') { rod_position -= 2.15; }
+				if (seq[1] == 'B') { rod_position -= 0.08; }
 				
 				if (seq[1] == 'D') { rodctrl_is_running = 0; }
 			
