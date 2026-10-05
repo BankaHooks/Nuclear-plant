@@ -1,2 +1,39 @@
-# Nuclear-plant
-Console game about Nuclear plant
+Main concept of console game about nuclear plant;
+
+***-----------------------------------------***
+I want to make this game in some reasons:  |
+(1) - I want to improve my knowledge of C; |
+(2) - I like games about nuclear plants;   |
+(3) - I like making games;                 |
+***-----------------------------------------***
+
+
+Creator: banka_hooks ; GitHub --->  ;
+
+
+1) Rods control interface idea ( v0.1) <-- The version when I'm gonna make this and add to current game;
+
+|----------------------------|
+|       1  2  3  4  5        |
+|  1          [0]            |
+|  2       [0][75][0]        |
+|  3     [0][50][50][0]      |
+|  4    [75][50][50][75]     |
+|  5     [0][50][50][0]      |
+|  6       [0][75][0]        |
+|  7          [0]            |
+|      {Rods-----control}    |
+|----------------------------|
+|           [1-3]            |
+|      [2-2][2-3][2-4]       |   <-- where is "*" is indicator of choosing by player; "[n-m]" - it's mean that player have choosen rod in ro>
+|   [3-2][3-3][3-4][3-5]     |                               { Or maybe we will indicate it by color - > Red - Rod is fill out ; green - fil>
+|   [4-2][4-3][4-4][4-5]     |
+|   [5-2][5-3][5-4][5-5]     |
+|      [6-2][6-2][6-4]       |
+|           [7-3]            |
+|----------------------------|
+
+
+Idea: Every Control panel is different window; User will have one window where he can see all parametrs and a few windows for control ; OR ->
+ with parametrs and controls buttons (Less ideas how to fast change paramets)
+
