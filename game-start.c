@@ -51,18 +51,18 @@ int main(){
 	printf("Succes!\n");
 	
 	tcsetattr(STDIN_FILENO, TCSANOW, &original_terminal_settings);
-	user_data();
+	user_data(void);
 	tcsetattr(STDIN_FILENO, TCSANOW, &raw_terminal_settings);
 
 	printf("Settings saved successfully!\n");
 	
-	rods_control();
+	rods_control(void);
 
 	restore_terminal();
 	return 0;
 }
 
-int user_data(){
+int user_data(void){
 	printf("Enter your name: ");
 	scanf("%s" , username);
 	printf("Enter game difficult: ");
@@ -76,7 +76,7 @@ int user_data(){
 	return 0;
 }
 
-int rods_control(){
+int rods_control(void){
 	printf("Please select rods to move (At least 4 rods by one time\n");
 	while (rodctrl_is_running) {
 		if (read(STDIN_FILENO, &key, 1) == 1) {
@@ -115,7 +115,7 @@ int rods_control(){
 	return 0;
 }
 
-int rods_interface(){
+int rods_interface(void){
 	printf("Current space - Rods interface\n");
 	printf("[]");	
 	restore_terminal();
@@ -125,4 +125,14 @@ int rods_interface(){
 void restore_terminal(void) {
 	tcsetattr(STDIN_FILENO, TCSANOW, &original_terminal_settings);
 }
+
+
+
+
+
+
+
+
+
+
 
