@@ -7,10 +7,34 @@
 
 void  render(void);
 
-int game_grid[7][7];
+int rows = 7;
+int col = 7;
+int game_grid[7][7] = {
+	{'*' , '*' , '*' , 'n' , '*' , '*', '*'},
+	{'*' , '*' , 'n' , 'n' , 'n' , '*' , '*'},
+	{'*' , 'n' , 'n' , 'n' , 'n' , 'n' , '*'},
+	{'*' , 'n' , 'n' , 'n' , 'n' , 'n' , '*'},
+	{'*' , '*' , 'n' , 'n' , 'n' , '*' , '*'},
+	{'*' , '*' , '*' , 'n' , '*' , '*' , '*'},
+
+};
 
 int main(){
-	render();
+	//render();
+
+	for (int i = 0; i < rows ; i++) {   // Move this for render system (With ASCII escape codes
+		for (int j = 0; j < col ; j++) {
+			if (game_grid[i][j] == 'n') {
+				printf("[%c]" , game_grid[i][j]);
+			}
+			else {
+				printf("   ");
+			}
+		}
+		printf("\n");
+	}
+
+
 	return 0;
 }
 
@@ -33,3 +57,4 @@ void render(void){
 	}
 	printf("\x1b[?25h");
 }
+
