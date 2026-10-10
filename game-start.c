@@ -2,9 +2,27 @@
 #include <termios.h>
 #include <unistd.h>
 
+#define ac_red "\x1b[31m" // - rod is filled out
+#define ac_green "\x1b[31m" // - rod is filled in 
+#define ac_blue "\x1b[31m" // - rod is selected (not sure for 0.1v)
+
 // - Preparation for game part
 struct termios original_terminal_settings;
 void restore_terminal(void);
+
+// - Preparations for render
+void render(void);
+int rows = 7;
+int col = 7;
+int game_grid[7][7] = {
+     {'*' , '*' , '*' , 'n' , '*' , '*', '*'},
+     {'*' , '*' , 'n' , 'n' , 'n' , '*' , '*'},
+     {'*' , 'n' , 'n' , 'n' , 'n' , 'n' , '*'},
+     {'*' , 'n' , 'n' , 'n' , 'n' , 'n' , '*'},
+     {'*' , '*' , 'n' , 'n' , 'n' , '*' , '*'},
+     {'*' , '*' , '*' , 'n' , '*' , '*' , '*'}, 
+};
+
 
 // - user-data part
 int user_data();
@@ -43,7 +61,7 @@ int main(){
 		restore_terminal();
 		return 1;
 	}
-	
+
 	char dummy_c;
 	printf("User verification started... ");
 	printf("Press any button to continue\n");
@@ -51,12 +69,16 @@ int main(){
 	printf("Succes!\n");
 	
 	tcsetattr(STDIN_FILENO, TCSANOW, &original_terminal_settings);
-	user_data(void);
+	user_data();
 	tcsetattr(STDIN_FILENO, TCSANOW, &raw_terminal_settings);
 
 	printf("Settings saved successfully!\n");
-	
-	rods_control(void);
+	    
+    //Preparation stage success -> starting game stage
+
+    render();
+
+	rods_control();
 
 	restore_terminal();
 	return 0;
@@ -126,7 +148,23 @@ void restore_terminal(void) {
 	tcsetattr(STDIN_FILENO, TCSANOW, &original_terminal_settings);
 }
 
+void render(void){
+    printf("\x1b[?25l");
+    printf("\x1b[1;1H");
+    printf("\x1b[2J");
 
+    for (int i=0; i < rows; i++) {
+        for (int j=0; j < col; j++) {
+            if (game_grid[i][j] == 'n') {
+                printf("[%c]" , game_grid[i][j]);
+            }
+            else {
+                printf("   ");
+            }
+        }
+        printf("\n");
+    }
+}
 
 
 
