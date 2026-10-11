@@ -3,8 +3,8 @@
 #include <unistd.h>
 
 #define ac_red "\x1b[31m" // - rod is filled out
-#define ac_green "\x1b[31m" // - rod is filled in 
-#define ac_blue "\x1b[31m" // - rod is selected (not sure for 0.1v)
+#define ac_green "\x1b[32m" // - rod is filled in 
+#define ac_blue "\x1b[34m" // - rod is selected (not sure for 0.1v)
 
 // - Preparation for game part
 struct termios original_terminal_settings;
@@ -29,7 +29,10 @@ int user_data();
 char username[50] = "none";
 int game_difficult = 1;
 double user_radiation = 0.0;
-/* int game_is_running = 1; //  1 - true ; 0 - false */
+
+int game_is_running = 1; //  1 - true ; 0 - false
+int CURRENT_STATE = 0; // 0 - Menu ; 1 - Rods; 2 - Turbine; 3 - Daerator; 4 - ECCS; 5 - Breakers; 6 - Pumps; 7 - Phone;
+
 
 // - Rods control part
 int rods_interface();
@@ -37,6 +40,8 @@ int rods_control();
 double rod_position = 100.0;
 char key; // Holding current key press;
 int rodctrl_is_running = 1; // 1 - true ; 0 - false
+
+int sector_choose(void);
 
 int main(){
 	tcgetattr(STDIN_FILENO, &original_terminal_settings);
@@ -75,10 +80,14 @@ int main(){
 	printf("Settings saved successfully!\n");
 	    
     //Preparation stage success -> starting game stage
-
-    render();
-
-	rods_control();
+    while(game_is_running) {
+        if (CURRENT_STATE == 0) {
+            sector_choose();
+        }
+        else if (CURRENT_STATE == 1) {
+            rods_control();
+        }
+    }
 
 	restore_terminal();
 	return 0;
@@ -92,13 +101,68 @@ int user_data(void){
 	printf("Registration succesfully completed...\n");
 	
 	printf("Your data: ");
-	printf("Name: %s" , username , " Game difficult: %d" , game_difficult , "Your radiation level: %f" , user_radiation , '\n');
+	printf("Name: %s" , username , " Game difficult: %d" , game_difficult , "Your radiation level: %f\n" , user_radiation);
 	
 	restore_terminal();
 	return 0;
 }
 
+int sector_choose(void) {
+    printf("\x1b[2J");
+    printf("\x1b[1;1H");
+
+    const char *sectors[7] = {"Rods-control" , "Turbine-control" , "Daerator-control" , "ECCS-control" , "Breakers-control" , "Pumps-control" , "Phone"};
+    int num_sectors = sizeof(sectors) / sizeof(sectors[0]);
+    
+    printf("\n Here is a list of aviable sectors: \n");
+    for (int i = 0; i < num_sectors; i++) {
+        printf("%d |  %s\n", i+1 , sectors[i]);
+    }
+    printf("Select one, please: ");
+    char s;
+    
+    while (1) {
+        if (read(STDIN_FILENO , &s , 1) == 1) {
+            if (s == 'q') {
+                return 0;
+            }
+            else if (s == '1') { 
+                CURRENT_STATE = 1; 
+                return 1;
+            }
+            else if (s == '2') { 
+                printf("No aviable in current version"); 
+                return 1;
+            }
+            else if (s == '3') { 
+                printf("No aviable in current version"); 
+                return 1;
+            }
+            else if (s == '4') { 
+                printf("No aviable in current version"); 
+                return 1;
+            }
+            else if (s == '5') { 
+                printf("No aviable in current version"); 
+                return 1;
+            }
+            else if (s == '6') { 
+                printf("No aviable in current version"); 
+                return 1;
+            }
+            else if (s == '7') { 
+                printf("No aviable in current version"); 
+                return 1;
+            }
+
+            usleep(50000);
+        }
+    }
+}
+
 int rods_control(void){
+    rodctrl_is_running = 1;
+    render();
 	printf("Please select rods to move (At least 4 rods by one time\n");
 	while (rodctrl_is_running) {
 		if (read(STDIN_FILENO, &key, 1) == 1) {
@@ -112,7 +176,10 @@ int rods_control(void){
 				
 				if (seq[1] == 'B') { rod_position -= 0.08; }
 				
-				if (seq[1] == 'D') { rodctrl_is_running = 0; }
+				if (seq[1] == 'D') { 
+                    rodctrl_is_running = 0;
+                    CURRENT_STATE = 0;
+                }
 			
 				
 				if (rod_position > 100) {  rod_position = 100; }
@@ -133,13 +200,6 @@ int rods_control(void){
 	tcsetattr(STDIN_FILENO, TCSANOW, &original_terminal_settings);
 	printf("\nAverage rods positions : %.1f%% " , rod_position , '\n');
 	
-	restore_terminal();
-	return 0;
-}
-
-int rods_interface(void){
-	printf("Current space - Rods interface\n");
-	printf("[]");	
 	restore_terminal();
 	return 0;
 }
