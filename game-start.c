@@ -165,7 +165,7 @@ int rods_control(void){
 	printf("Please select rods to move (At least 4 rods by one time\n");
 	while (rodctrl_is_running) {
         render();
-		if (read(STDIN_FILENO, &key, 1) == 1) {
+		/*if (read(STDIN_FILENO, &key, 1) == 1) {
 			// We will handle the arrow keys here
 			if (key == 27) {
 				char seq[2];
@@ -186,7 +186,9 @@ int rods_control(void){
 				if (rod_position < 0) { rod_position = 0; }
 
 				printf("\rRods: %.2f%%  " , rod_position);
-				fflush(stdout); // Force the screen to update immediately 
+				fflush(stdout); // Force the screen to update immediately */ 
+
+        // - Here should be rods choosing. And only then we can move them;
 
 			}
 		}
