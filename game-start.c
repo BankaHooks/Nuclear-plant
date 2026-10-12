@@ -154,17 +154,17 @@ int sector_choose(void) {
                 printf("No aviable in current version"); 
                 return 1;
             }
-
-            usleep(50000);
         }
+        
+        usleep(50000);
     }
 }
 
 int rods_control(void){
     rodctrl_is_running = 1;
-    render();
 	printf("Please select rods to move (At least 4 rods by one time\n");
 	while (rodctrl_is_running) {
+        render();
 		if (read(STDIN_FILENO, &key, 1) == 1) {
 			// We will handle the arrow keys here
 			if (key == 27) {
@@ -204,27 +204,39 @@ int rods_control(void){
 	return 0;
 }
 
+void game_end(void) {
+    restore_terminal();
+    printf("\x1b[2J");
+    printf("\x1b[1;1H");
+    printf("\x1b[?25h");
+    printf("Thanks for playing");
+}
+
 void restore_terminal(void) {
 	tcsetattr(STDIN_FILENO, TCSANOW, &original_terminal_settings);
 }
 
 void render(void){
-    printf("\x1b[?25l");
-    printf("\x1b[1;1H");
-    printf("\x1b[2J");
+    if (CURRENT_STATE == 1) { // - Render Rods-control 
+        printf("\x1b[?25l");
+        printf("\x1b[1;1H");
+        printf("\x1b[2J");
 
-    for (int i=0; i < rows; i++) {
-        for (int j=0; j < col; j++) {
-            if (game_grid[i][j] == 'n') {
-                printf("[%c]" , game_grid[i][j]);
+        for (int i=0; i < rows; i++) {
+            for (int j=0; j < col; j++) {
+                if (game_grid[i][j] == 'n') {
+                    printf("[%c]" , game_grid[i][j]);
+                }
+                else {
+                    printf("   ");
+                }
             }
-            else {
-                printf("   ");
-            }
+            printf("\n");
         }
-        printf("\n");
-    }
-}
+    } 
+
+
+}   
 
 
 
