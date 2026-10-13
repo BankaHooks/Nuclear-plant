@@ -72,4 +72,14 @@ int rods_choose(void) {
     }
 }
 
+void render(double rod_position) {
+    printf("\x1b[?25l");
+    printf("\x1b[?1:1H");
+
+    for (int i = 0; i < rows ; i++) {
+        for (int j = 0; j < col; j++) {
+            
+        }
+    }
+}
 
