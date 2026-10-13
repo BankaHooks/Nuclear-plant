@@ -2,6 +2,8 @@
 #include <termios.h>
 #include <unistd.h>
 
+#include "rod_control.h" 
+
 #define ac_red "\x1b[31m" // - rod is filled out
 #define ac_green "\x1b[32m" // - rod is filled in 
 #define ac_blue "\x1b[34m" // - rod is selected (not sure for 0.1v)
@@ -10,17 +12,16 @@
 struct termios original_terminal_settings;
 void restore_terminal(void);
 
-// - Preparations for render
-void render(void);
-int rows = 7;
-int col = 7;
-int game_grid[7][7] = {
-     {'*' , '*' , '*' , 'n' , '*' , '*', '*'},
-     {'*' , '*' , 'n' , 'n' , 'n' , '*' , '*'},
-     {'*' , 'n' , 'n' , 'n' , 'n' , 'n' , '*'},
-     {'*' , 'n' , 'n' , 'n' , 'n' , 'n' , '*'},
-     {'*' , '*' , 'n' , 'n' , 'n' , '*' , '*'},
-     {'*' , '*' , '*' , 'n' , '*' , '*' , '*'}, 
+// - Prepiarations for render
+void render(double rod_position);
+int rows = 5;
+int col = 5;
+int game_grid[5][5] = {
+     {'*' , 'n' , 'n' , 'n' , '*'},
+     {'n' , 'n' , 'n' , 'n' , 'n'},
+     {'n' , 'n' , 'n' , 'n' , 'n'},
+     {'n' , 'n' , 'n' , 'n' , 'n'},
+     {'*' , 'n' , 'n' , 'n' , '*'} 
 };
 
 
@@ -111,7 +112,7 @@ int sector_choose(void) {
     printf("\x1b[2J");
     printf("\x1b[1;1H");
 
-    const char *sectors[7] = {"Rods-control" , "Turbine-control" , "Daerator-control" , "ECCS-control" , "Breakers-control" , "Pumps-control" , "Phone"};
+    const char *sectors[8] = {"Rods-control" , "Turbine-control" , "Daerator-control" , "ECCS-control" , "Breakers-control" , "Pumps-control" , "Phone" , "End_shift"};
     int num_sectors = sizeof(sectors) / sizeof(sectors[0]);
     
     printf("\n Here is a list of aviable sectors: \n");
@@ -154,19 +155,24 @@ int sector_choose(void) {
                 printf("No aviable in current version"); 
                 return 1;
             }
+            else if (s == '8') {
+                game_end(); // Then add a results of current session;    
+            }
         }
         
         usleep(50000);
     }
 }
 
+int selected_row , selected_col;
+
 int rods_control(void){
     rodctrl_is_running = 1;
 	printf("Please select rods to move (At least 4 rods by one time\n");
 	while (rodctrl_is_running) {
-        render();
-		/*if (read(STDIN_FILENO, &key, 1) == 1) {
-			// We will handle the arrow keys here
+        render(rod_position);
+		(read(STDIN_FILENO, &key, 1) == 1) {
+			We will handle the arrow keys here
 			if (key == 27) {
 				char seq[2];
 				read(STDIN_FILENO, &seq[0], 1);
@@ -218,7 +224,7 @@ void restore_terminal(void) {
 	tcsetattr(STDIN_FILENO, TCSANOW, &original_terminal_settings);
 }
 
-void render(void){
+void  render(double rod_position){
     if (CURRENT_STATE == 1) { // - Render Rods-control 
         printf("\x1b[?25l");
         printf("\x1b[1;1H");
