@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <unistd.h>
 
 #include "rod_control.h"
 
@@ -9,7 +10,7 @@
 
 // Functions prototypes
 void rods_render(double rod_position);
-int rods_control();
+int rods_control(void);
 
 int rows = 5;
 int col = 4;
@@ -31,11 +32,11 @@ double rods_data[5][4] = {
     {-1.0 , 100.00 , 100.00 , -1.0}
 };
 
-char key; // Holding current key press;
-int rodctrl_is_running = 1;
+static char key; // Holding current key press;
+static int rodctrl_is_running = 1;
 int rods_choose(void);
 
-int choosen_rods[3][2] = {
+static int choosen_rods[3][2] = {
     {0 , 0},
     {0 , 0},
     {0 , 0}
@@ -93,5 +94,20 @@ void rods_render(double rod_position) {
             }             
         }
     }
+}
+
+int rods_control(void) {
+    rodctrl_is_running = 1;
+    printf("Please select rods to move (At least 3 rods by one time\n");
+    while (rodctrl_is_running) {
+        if (read(STDIN_FILENO, &key, 1) == 1) {
+            if (key == 27) {
+                char seq[3];
+                read(STDIN_FILENO, &seq[0] , 1);
+                read(STDIN_FILENO, &seq[1] , 1);
+            }
+        }
+    }  // <- Move this to Choose_rods ( and then call function here to choose rods );
+    return 0;
 }
 

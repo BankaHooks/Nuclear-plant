@@ -157,7 +157,6 @@ int rods_control(void){
     rodctrl_is_running = 1;
 	printf("Please select rods to move (At least 4 rods by one time\n");
 	while (rodctrl_is_running) {
-        render(rod_position);
 		if (read(STDIN_FILENO, &key, 1) == 1) {
 			if (key == 27) {
 				char seq[2];
