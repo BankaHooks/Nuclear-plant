@@ -5,9 +5,10 @@
 #define ac_red "\x1b[31m" // - rod is filled out
 #define ac_green "\x1b[32m" // - rod is filled in
 #define ac_blue "\x1b[34m" // - rod is selected 
+#define ac_clear "\x1b[0m" // - reset color
 
 // Functions prototypes
-void render(double rod_position);
+void rods_render(double rod_position);
 int rods_control();
 
 int rows = 5;
@@ -22,12 +23,12 @@ int game_grid[5][4] = {
 
 
 
-int rods_data[5][4] = {
-    {0 , 100 , 100 , 0},
-  {100 , 100 , 100 , 100},
-  {100 , 100 , 100 , 100},
-  {100 , 100 , 100 , 100},
-    {0 , 100 , 100 , 0}
+double rods_data[5][4] = {
+    {-1.0 , 100.00 , 100.00 , -1.0},
+  {100.00 , 100.00 , 100.00 , 100.00},
+  {100.00 , 100.00 , 100.00 , 100.00},
+  {100.00 , 100.00 , 100.00 , 100.00},
+    {-1.0 , 100.00 , 100.00 , -1.0}
 };
 
 char key; // Holding current key press;
@@ -72,13 +73,24 @@ int rods_choose(void) {
     }
 }
 
-void render(double rod_position) {
+void rods_render(double rod_position) {
     printf("\x1b[?25l");
     printf("\x1b[?1:1H");
 
     for (int i = 0; i < rows ; i++) {
         for (int j = 0; j < col; j++) {
-            
+            if (rods_data[i][j] < 97.00 && rods_data[i][j] > 3) {
+                printf(ac_clear  "[%.2f]" , rods_data[i][j]);
+            }
+            else if (rods_data[i][j] == -1) {
+                printf("   ");
+            }
+            else if (rods_data[i][j] < 3.00) {
+                printf(ac_red "[%.2f]" ac_clear , rods_data[i][j]);
+            }
+            else if (rods_data[i][j] > 97.00) {
+                printf(ac_green "[%.2f]" ac_clear , rods_data[i][j]);
+            }             
         }
     }
 }

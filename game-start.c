@@ -11,19 +11,7 @@
 // - Preparation for game part
 struct termios original_terminal_settings;
 void restore_terminal(void);
-
-// - Prepiarations for render
-void render(double rod_position);
-int rows = 5;
-int col = 5;
-int game_grid[5][5] = {
-     {'*' , 'n' , 'n' , 'n' , '*'},
-     {'n' , 'n' , 'n' , 'n' , 'n'},
-     {'n' , 'n' , 'n' , 'n' , 'n'},
-     {'n' , 'n' , 'n' , 'n' , 'n'},
-     {'*' , 'n' , 'n' , 'n' , '*'} 
-};
-
+void game_end(void);
 
 // - user-data part
 int user_data();
@@ -33,7 +21,6 @@ double user_radiation = 0.0;
 
 int game_is_running = 1; //  1 - true ; 0 - false
 int CURRENT_STATE = 0; // 0 - Menu ; 1 - Rods; 2 - Turbine; 3 - Daerator; 4 - ECCS; 5 - Breakers; 6 - Pumps; 7 - Phone;
-
 
 // - Rods control part
 int rods_interface();
@@ -171,8 +158,7 @@ int rods_control(void){
 	printf("Please select rods to move (At least 4 rods by one time\n");
 	while (rodctrl_is_running) {
         render(rod_position);
-		(read(STDIN_FILENO, &key, 1) == 1) {
-			We will handle the arrow keys here
+		if (read(STDIN_FILENO, &key, 1) == 1) {
 			if (key == 27) {
 				char seq[2];
 				read(STDIN_FILENO, &seq[0], 1);
@@ -223,34 +209,4 @@ void game_end(void) {
 void restore_terminal(void) {
 	tcsetattr(STDIN_FILENO, TCSANOW, &original_terminal_settings);
 }
-
-void  render(double rod_position){
-    if (CURRENT_STATE == 1) { // - Render Rods-control 
-        printf("\x1b[?25l");
-        printf("\x1b[1;1H");
-        printf("\x1b[2J");
-
-        for (int i=0; i < rows; i++) {
-            for (int j=0; j < col; j++) {
-                if (game_grid[i][j] == 'n') {
-                    printf("[%c]" , game_grid[i][j]);
-                }
-                else {
-                    printf("   ");
-                }
-            }
-            printf("\n");
-        }
-    } 
-
-
-}   
-
-
-
-
-
-
-
-
 
