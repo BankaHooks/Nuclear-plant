@@ -74,6 +74,9 @@ int rods_choose(void) {
                     if (cur_col > 0) { cur_col--;}
                     else if (cur_row <= 0) { cur_col = 0;}
                 }
+                else if (seq[1] == '') {
+                    return 1; // Here adding this for array with choosen rods
+                }
 
         }
     }
