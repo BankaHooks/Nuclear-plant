@@ -14,15 +14,6 @@ int rods_control(void);
 
 int rows = 5;
 int col = 4;
-int game_grid[5][4] = {
-    {'*' , 'n' , 'n' , '*'},
-    {'n' , 'n' , 'n' , 'n'},
-    {'n' , 'n' , 'n' , 'n'},
-    {'n' , 'n' , 'n' , 'n'},
-    {'*' , 'n' , 'n' , '*'}
-};
-
-
 
 double rods_data[5][4] = {
     {-1.0 , 100.00 , 100.00 , -1.0},
@@ -55,24 +46,45 @@ int restart_choosen_rods(int choosen_rods[3][2]) {
 int rods_choose(void) {
     restart_choosen_rods(choosen_rods);
 
+    int cur_row = 0;
+    int cur_col = 0;
     
+    while (rodctrl_is_running) {
+        if (read(STDIN_FILENO, &key, 1) == 1) {
+            if (key == 27) {
+                char seq[4];
+                read(STDIN_FILENO, &seq[0] , 1);
+                read(STDIN_FILENO, &seq[1] , 1);
+                read(STDIN_FILENO, &seq[2] , 1);
+                read(STDIN_FILENO, &seq[3] , 1);
+                
+            }
+        }
+    }
+
     if ((sizeof(choosen_rods) / sizeof(choosen_rods[0])) == 3) {
-        return 1;
+        return 0;
     }
     else if ((sizeof(choosen_rods) / sizeof(choosen_rods[0])) == 2) {
         choosen_rods[3][1] = 0;
         choosen_rods[3][2] = 0;
+        return 0;
     }
     else if ((sizeof(choosen_rods) / sizeof(choosen_rods[0])) == 1) {
         choosen_rods[3][1] = 0;
         choosen_rods[3][2] = 0;
         choosen_rods[2][1] = 0;
         choosen_rods[2][2] = 0;
+        return 0;
     }
     else {
         printf("You haven't choosen any rod!");
+        return 1;
     }
+
 }
+
+int mode_select; // 0 - choosing rods ; 1 - moving choosen rods ;
 
 void rods_render(double rod_position) {
     printf("\x1b[?25l");
@@ -96,8 +108,11 @@ void rods_render(double rod_position) {
     }
 }
 
+int mode_select; // 0 - choosing rods ; 1 - moving choosen rods ;
+
 int rods_control(void) {
     rodctrl_is_running = 1;
+
     printf("Please select rods to move (At least 3 rods by one time\n");
     while (rodctrl_is_running) {
         if (read(STDIN_FILENO, &key, 1) == 1) {
