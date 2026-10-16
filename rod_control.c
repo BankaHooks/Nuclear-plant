@@ -57,8 +57,24 @@ int rods_choose(void) {
                 read(STDIN_FILENO, &seq[1] , 1);
                 read(STDIN_FILENO, &seq[2] , 1);
                 read(STDIN_FILENO, &seq[3] , 1);
-                
-            }
+               
+                if (seq[1] == 'A') {
+                   if (cur_row > 0) { cur_row++; }
+                   else if (cur_row <= 0) { cur_row = 0 } 
+                }
+                else if (seq[1] == 'B') {
+                    if (cur_row < 5) { cur_row--; }
+                    else if (cur_row >= 5) { cur_row = 5; } 
+                }
+                else if (seq[1] == 'C') {
+                    if (cur_col < 4) { cur_col++; }
+                    else if (cur_row >= 4) { cur_col = 4; }
+                }
+                else if (seq[1] == 'D') {
+                    if (cur_col > 0) { cur_col--;}
+                    else if (cur_row <= 0) { cur_col = 0;}
+                }
+
         }
     }
 
