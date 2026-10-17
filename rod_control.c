@@ -54,11 +54,9 @@ int rods_choose(void) {
     while (rodctrl_is_running) {
         if (read(STDIN_FILENO, &key, 1) == 1) {
             if (key == 27) {
-                char seq[4];
+                char seq[2];
                 read(STDIN_FILENO, &seq[0] , 1);
                 read(STDIN_FILENO, &seq[1] , 1);
-                // read(STDIN_FILENO, &seq[2] , 1);
-                //read(STDIN_FILENO, &seq[3] , 1);
                
                 if (seq[1] == 'A') {
                    if (cur_row > 0) { cur_row++; }
@@ -76,12 +74,12 @@ int rods_choose(void) {
                     if (cur_col > 0) { cur_col--;}
                     else if (cur_row <= 0) { cur_col = 0;}
                 }
-                else if (seq[1] == '') { // - Here must be "C" ANSI code
+            }
+            else if (key == 'c') { // - Here must be "C" ANSI code
                     choosen_rods[fill_rod_array][0] = cur_row;
                     choosen_rods[fill_rod_array][1] = cur_col;
                     fill_rod_array++;
-                }
-
+            }
         }
     }
 
