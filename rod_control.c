@@ -9,8 +9,9 @@
 #define ac_clear "\x1b[0m" // - reset color
 
 // Functions prototypes
-void rods_render(double rod_position);
+void rods_render(double rod_position , int mode_select);
 int rods_control(void);
+int mode_selection_window(void);
 
 int rows = 5;
 int col = 4;
@@ -48,6 +49,7 @@ int rods_choose(void) {
 
     int cur_row = 0;
     int cur_col = 0;
+    int fill_rod_array = 0;
     
     while (rodctrl_is_running) {
         if (read(STDIN_FILENO, &key, 1) == 1) {
@@ -55,12 +57,12 @@ int rods_choose(void) {
                 char seq[4];
                 read(STDIN_FILENO, &seq[0] , 1);
                 read(STDIN_FILENO, &seq[1] , 1);
-                read(STDIN_FILENO, &seq[2] , 1);
-                read(STDIN_FILENO, &seq[3] , 1);
+                // read(STDIN_FILENO, &seq[2] , 1);
+                //read(STDIN_FILENO, &seq[3] , 1);
                
                 if (seq[1] == 'A') {
                    if (cur_row > 0) { cur_row++; }
-                   else if (cur_row <= 0) { cur_row = 0 } 
+                   else if (cur_row <= 0) { cur_row = 0; } 
                 }
                 else if (seq[1] == 'B') {
                     if (cur_row < 5) { cur_row--; }
@@ -74,8 +76,10 @@ int rods_choose(void) {
                     if (cur_col > 0) { cur_col--;}
                     else if (cur_row <= 0) { cur_col = 0;}
                 }
-                else if (seq[1] == '') {
-                    return 1; // Here adding this for array with choosen rods
+                else if (seq[1] == '') { // - Here must be "C" ANSI code
+                    choosen_rods[fill_rod_array][0] = cur_row;
+                    choosen_rods[fill_rod_array][1] = cur_col;
+                    fill_rod_array++;
                 }
 
         }
@@ -105,35 +109,42 @@ int rods_choose(void) {
 
 int mode_select; // 0 - choosing rods ; 1 - moving choosen rods ;
 
-void rods_render(double rod_position) {
+void rods_render(double rod_position , int mode_select) {
     printf("\x1b[?25l");
     printf("\x1b[?1:1H");
-
-    for (int i = 0; i < rows ; i++) {
-        for (int j = 0; j < col; j++) {
-            if (rods_data[i][j] < 97.00 && rods_data[i][j] > 3) {
-                printf(ac_clear  "[%.2f]" , rods_data[i][j]);
+    
+    if (mode_select == 1) {
+        for (int i = 0; i < rows ; i++) {
+            for (int j = 0; j < col; j++) {
+                if (rods_data[i][j] < 97.00 && rods_data[i][j] > 3) {
+                    printf(ac_clear  "[%.2f]" , rods_data[i][j]);
+                }
+                else if (rods_data[i][j] == -1) {
+                    printf("   ");
+                }
+                else if (rods_data[i][j] < 3.00) {
+                    printf(ac_red "[%.2f]" ac_clear , rods_data[i][j]);
+                }
+                else if (rods_data[i][j] > 97.00) {
+                    printf(ac_green "[%.2f]" ac_clear , rods_data[i][j]);
+                }             
             }
-            else if (rods_data[i][j] == -1) {
-                printf("   ");
+        }
+    }
+    else if (mode_select == 0) {
+        for (int i = 0; i < rows ; i++) {
+            for (int j = 0; j < col; j++) {
+               // if (
             }
-            else if (rods_data[i][j] < 3.00) {
-                printf(ac_red "[%.2f]" ac_clear , rods_data[i][j]);
-            }
-            else if (rods_data[i][j] > 97.00) {
-                printf(ac_green "[%.2f]" ac_clear , rods_data[i][j]);
-            }             
         }
     }
 }
-
-int mode_select; // 0 - choosing rods ; 1 - moving choosen rods ;
 
 int rods_control(void) {
     rodctrl_is_running = 1;
 
     printf("Please select rods to move (At least 3 rods by one time\n");
-    while (rodctrl_is_running) {
+   /* while (rodctrl_is_running) {
         if (read(STDIN_FILENO, &key, 1) == 1) {
             if (key == 27) {
                 char seq[3];
@@ -141,7 +152,38 @@ int rods_control(void) {
                 read(STDIN_FILENO, &seq[1] , 1);
             }
         }
-    }  // <- Move this to Choose_rods ( and then call function here to choose rods );
+    } */  // <- Move this to Choose_rods ( and then call function here to choose rods );
     return 0;
 }
 
+int mode_selection_window(void) {
+    
+    const char  *modes[2] = {"Rods-choosing" , "Rods-moving"};
+    int num_sectors = sizeof(modes) / sizeof(modes[0]);
+    
+    printf("Here is list of aviable modes: \n");
+
+    for (int i = 0; i < num_sectors ; i++) {
+        printf("%s" , modes[i]);
+    }     
+   
+    printf("Please select mode: ");
+    
+    char s;
+
+    while (1) {
+        if (read(STDIN_FILENO , &s , 1) ==  1) {
+            if (s == 'q') {
+                return 0;
+            }
+            else if (s == '1') {
+                mode_select = 0; // Rods-choosing
+                return 1; 
+            }
+            else if (s == '2') {
+                mode_select = 1; // Rods-moving
+                return 1;
+        } 
+    }
+        usleep(50000);
+}

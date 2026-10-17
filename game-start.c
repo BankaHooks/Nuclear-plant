@@ -151,9 +151,9 @@ int sector_choose(void) {
     }
 }
 
-int selected_row , selected_col;
 
-int rods_control(void){
+
+/* int rods_control(void){
     rodctrl_is_running = 1;
 	printf("Please select rods to move (At least 4 rods by one time\n");
 	while (rodctrl_is_running) {
@@ -196,7 +196,7 @@ int rods_control(void){
 	restore_terminal();
 	return 0;
 }
-
+*/
 void game_end(void) {
     restore_terminal();
     printf("\x1b[2J");
