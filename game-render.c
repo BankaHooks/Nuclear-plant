@@ -9,9 +9,10 @@ void  render(void);
 
 int rows = 7;
 int col = 7;
-int game_grid[7][7] = {
+char game_grid[7][7] = {
 	{'*' , '*' , '*' , 'n' , '*' , '*', '*'},
 	{'*' , '*' , 'n' , 'n' , 'n' , '*' , '*'},
+	{'*' , 'n' , 'n' , 'n' , 'n' , 'n' , '*'},
 	{'*' , 'n' , 'n' , 'n' , 'n' , 'n' , '*'},
 	{'*' , 'n' , 'n' , 'n' , 'n' , 'n' , '*'},
 	{'*' , '*' , 'n' , 'n' , 'n' , '*' , '*'},
@@ -29,7 +30,7 @@ int main(){
 void render(void){
 	printf("\x1b[?25l");
 	printf("\x1b[1;1H");
-	printf(ac_clear);	
+	printf(ac_clear);
 
 	for (int i = 0; i < rows ; i++) {
 		for (int j = 0; j < col ; j++) {
@@ -40,7 +41,8 @@ void render(void){
 				printf("  ");
 			}
 		}
-	}	
+		printf('\n');
+	}
 
 	printf("\x1b[?25h");
 }
